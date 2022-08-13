@@ -4,4 +4,6 @@ The objective of the game is to make the highest score you can. You have 3 lives
 Controls
 Movement = Arrowkeys /
 Superpower = Ctrl /
-See Hitbox = "D" 
+See Hitbox = "D"
+
+If you destroy an enemy you get +1 points, but if you get hit by and enemy you lose -5 points
