@@ -1,4 +1,4 @@
-import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit } from "./playerStates.js";
+import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit, KO } from "./playerStates.js";
 import { CollisionAnimation } from "./collisionAnimation.js"
 import { FloatingMessage } from "./floatingMessages.js"
 
@@ -15,13 +15,14 @@ export class Player {
         this.frameX = 0;
         this.frameY = 0;
         this.maxFrame = 6;
+        this.animationTimerKO = 0;
         this.fps = 20;
         this.frameTimer = 0;
         this.frameInterval = 1000/this.fps;
         this.speed = 0;
         this.maxSpeed = 10;
         this.gameSpeed = gameSpeed;
-        this.states = [new Sitting(this.game), new Running(this.game), new Jumping(this.game), new Falling(this.game), new Rolling(this.game), new Diving(this.game), new Hit(this.game)];
+        this.states = [new Sitting(this.game), new Running(this.game), new Jumping(this.game), new Falling(this.game), new Rolling(this.game), new Diving(this.game), new Hit(this.game), new KO(this.game)];
         this.currentState = null;
     }
     update(input, deltatime){
@@ -29,8 +30,8 @@ export class Player {
         this.currentState.handleInput(input);
         // horizontal movement
         this.x += this.speed;
-        if (input.includes("ArrowLeft") && this.currentState !== this.states[6]) this.speed = -this.maxSpeed;
-        else if (input.includes("ArrowRight") && this.currentState !== this.states[6]) this.speed = this.maxSpeed;
+        if (input.includes("ArrowLeft") && this.currentState !== this.states[6] && this.currentState !== this.states[7]) this.speed = -this.maxSpeed;
+        else if (input.includes("ArrowRight") && this.currentState !== this.states[6] && this.currentState !== this.states[7]) this.speed = this.maxSpeed;
         else this.speed = 0;
         // horizontal boundaries
         if (this.x + this.width >= this.game.width) this.x = this.game.width - this.width;
@@ -43,12 +44,16 @@ export class Player {
         if (this.y > this.game.height - this.height - this.game.groundMargin) this.y = this.game.height - this.height - this.game.groundMargin;
         if (this.y <= 0) this.y = 0;
         // animate
-        if (this.frameTimer >= this.frameInterval){
+        if (this.frameTimer >= this.frameInterval && this.animationTimerKO < 1){
             this.frameTimer = 0;
             if (this.frameX >= this.maxFrame) {
                 this.frameX = 0;
             } else {
                 this.frameX++;
+            }
+            if (this.currentState === this.states[7] && this.frameX >= this.maxFrame){
+                this.animationTimerKO++;
+                this.game.gameOver = true;
             }
         } else {
             this.frameTimer += deltatime;
@@ -84,8 +89,8 @@ export class Player {
                     this.game.lives--;
                     this.game.score -= 5;
                     if (this.game.score < 0) this.game.score = 0;
-                    if (this.game.lives <= 0) this.game.gameOver = true;
-                    this.setState(6, 0);
+                    if (this.game.lives > 0) this.setState(6, 0);
+                    else this.setState(7, 0);
                 }
             }
         });
