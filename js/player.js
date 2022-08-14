@@ -58,6 +58,12 @@ export class Player {
         } else {
             this.frameTimer += deltatime;
         }
+        // energy managment
+        if (this.currentState === this.states[4]){
+            this.game.energyBar.update(1);
+        } else {
+            this.game.energyBar.update(-1);
+        }
     }
     draw(context){
         if (this.game.debug) context.strokeRect(this.x, this.y, this.width, this.height);
@@ -70,6 +76,11 @@ export class Player {
         this.currentState = this.states[state];
         this.game.speed = speed;
         this.currentState.enter();
+        if (this.currentState === this.states[0]) {
+            this.game.floatingMessages.push(new FloatingMessage("-3", this.x, this.y, 125, 45));
+            this.game.score -= 3;
+            if (this.game.score < 0) this.game.score = 0;
+        }
     }
     checkCollision(){
         this.game.enemies.forEach(enemy => {
@@ -85,9 +96,9 @@ export class Player {
                     this.game.score++;
                     this.game.floatingMessages.push(new FloatingMessage("+1", enemy.x, enemy.y, 125, 45));
                 } else {
-                    this.game.floatingMessages.push(new FloatingMessage("-5", enemy.x, enemy.y, 125, 45));
+                    this.game.floatingMessages.push(new FloatingMessage("-4", enemy.x, enemy.y, 125, 45));
                     this.game.lives--;
-                    this.game.score -= 5;
+                    this.game.score -= 4;
                     if (this.game.score < 0) this.game.score = 0;
                     if (this.game.lives > 0) this.setState(6, 0);
                     else this.setState(7, 0);
