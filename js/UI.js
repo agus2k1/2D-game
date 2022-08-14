@@ -4,6 +4,12 @@ export class UI {
         this.fontSize = 30;
         this.fontFamily = "Creepster";
         this.livesImage = lives;
+        this.fps = 20;
+        this.timeInterval = 1000/this.fps;
+        this.frameTimer = 0;
+        this.opacity = 0;
+        this.addTime = 0.001;
+        this.lastTime = 0;
     }
     draw(context){
         context.save();
@@ -18,13 +24,29 @@ export class UI {
         context.fillText("Score: " + this.game.score, 20, 50);
         // timer
         context.font = this.fontSize * 0.8 + "px " + this.fontFamily;
-        context.fillText("Time: " + (this.game.time * 0.001).toFixed(1), 20, 80);
+        if (this.game.gameOver) {
+            context.fillText("Time: " + (this.lastTime).toFixed(1), 20, 80);
+        } else {
+            this.lastTime = this.game.time * this.addTime;
+            context.fillText("Time: " + (this.game.time * this.addTime).toFixed(1), 20, 80);
+        }
         // lives
         for (let i = 0; i < this.game.lives; i++) {
             context.drawImage(this.livesImage, 30 * i + 20, 95, 25, 25);
         }
         // game over messages
         if (this.game.gameOver){
+            context.globalAlpha = this.opacity;
+            if (this.frameTimer > this.timeInterval){
+                if (this.opacity > 1){
+                    this.frameTimer = this.timeInterval + 1;
+                } else {
+                    this.opacity += 0.1;
+                    this.frameTimer = 0;
+                } 
+            } else {
+                this.frameTimer += 10;
+            }
             context.textAlign = "center";
             context.font = this.fontSize * 1.5 + "px " + this.fontFamily;
             if (this.game.score >= 0 && this.game.score < 15){
