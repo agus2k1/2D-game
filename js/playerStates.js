@@ -31,7 +31,7 @@ export class Sitting extends State {
         if (input.includes("ArrowLeft") || input.includes("ArrowRight")){
             this.game.player.setState(states.RUNNING, this.game.player.gameSpeed);
         }
-        else if (input.includes("Control")) {
+        else if (input.includes("Control") && !this.game.energyBar.outOfEnergy) {
             this.game.player.setState(states.ROLLING, this.game.player.gameSpeed * 2);
         }
     }
@@ -54,12 +54,9 @@ export class Running extends State {
         else if (input.includes("ArrowUp")){
             this.game.player.setState(states.JUMPING, this.game.player.gameSpeed);
         }
-        else if (input.includes("Control")) {
+        else if (input.includes("Control") && !this.game.energyBar.outOfEnergy) {
             this.game.player.setState(states.ROLLING, this.game.player.gameSpeed * 2);
         }
-        /* else if (input.includes("Control") && (input.includes("ArrowRight") || input.includes("ArrowLeft"))) {
-            this.game.player.setState(states.ROLLING, this.game.player.gameSpeed * 2);
-        } */
     }
 }
 
@@ -77,7 +74,7 @@ export class Jumping extends State {
         if (this.game.player.vy > 0 && !input.includes("Control")){
             this.game.player.setState(states.FALLING, this.game.player.gameSpeed);
         }
-        else if (input.includes("Control")) {
+        else if (input.includes("Control") && !this.game.energyBar.outOfEnergy) {
             this.game.player.setState(states.ROLLING, this.game.player.gameSpeed * 2);
         }
     }
@@ -115,6 +112,8 @@ export class Rolling extends State {
         else if (!input.includes("Control") && !this.game.player.onGround()) this.game.player.setState(states.FALLING, this.game.player.gameSpeed);
         else if (input.includes("Control") && input.includes("ArrowUp") && this.game.player.onGround()) this.game.player.vy -= 27;
         else if (input.includes("ArrowDown") && !this.game.player.onGround()) this.game.player.setState(states.DIVING, this.game.player.gameSpeed);
+        if (this.game.energyBar.outOfEnergy && this.game.player.onGround()) this.game.player.setState(states.RUNNING, this.game.player.gameSpeed);
+        if (this.game.energyBar.outOfEnergy && !this.game.player.onGround()) this.game.player.setState(states.FALLING, this.game.player.gameSpeed);
     } 
 }
 
@@ -136,7 +135,7 @@ export class Diving extends State {
             }
             this.game.player.setState(states.RUNNING, this.game.player.gameSpeed);
         }
-        else if (input.includes("Control") && this.game.player.onGround()){
+        else if (input.includes("Control") && this.game.player.onGround() && !this.game.energyBar.outOfEnergy){
             this.game.player.setState(states.ROLLING, this.game.player.gameSpeed * 2);
         }
     } 
@@ -171,6 +170,5 @@ export class KO extends State {
         this.game.player.maxFrame = 11;
     }
     handleInput(input){
-        
     } 
 }
