@@ -96,3 +96,36 @@ export class UI {
         context.restore();
     }
 }
+
+export class EnergyBar {
+    constructor(game, x, y, width, height, maxEnergy, color){
+        this.game = game;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.maxEnergy = maxEnergy;
+        this.maxWidth = width;
+        this.energy = maxEnergy;
+        this.color = color;
+        this.outOfEnergy = false;
+    }
+    update(val){
+        this.energy -= val;
+        this.width = (this.energy / this.maxEnergy) * this.maxWidth;
+        if (this.energy <= 0){
+            this.energy = 0;
+            this.outOfEnergy = true;
+        } else if (this.energy > 20) {
+            this.outOfEnergy = false;
+        }
+        if (this.energy > this.maxEnergy) this.energy = this.maxEnergy;
+    }
+    draw(context){
+        context.lineWidth = 5;
+        context.strokeStyle = "#333";
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.strokeRect(this.x, this.y, this.maxWidth, this.height);
+    }
+}
