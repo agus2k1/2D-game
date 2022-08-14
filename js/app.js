@@ -3,7 +3,7 @@ import { Player } from "./player.js";
 import { InputHandler } from "./input.js";
 import { Background } from "./background.js";
 import { FlyingEnemy, GroundEnemy, ClimbingEnemy } from "./enemies.js";
-import { UI } from "./UI.js";
+import { EnergyBar, UI } from "./UI.js";
 
 window.addEventListener("load", function() {
     const canvas = document.getElementById("canvas1");
@@ -21,6 +21,7 @@ window.addEventListener("load", function() {
             this.input = new InputHandler(this);
             this.background = new Background(this);
             this.UI = new UI(this);
+            this.energyBar = new EnergyBar(this, 22, 135, 85, 10, 100, "white");
             this.enemies = [];
             this.particles = [];
             this.collisions = [];
@@ -74,6 +75,7 @@ window.addEventListener("load", function() {
         draw(context){
             this.background.draw(context);
             this.player.draw(context);
+            this.energyBar.draw(context);
             this.enemies.forEach(enemy => {
                 enemy.draw(context);
             });
