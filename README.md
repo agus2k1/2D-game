@@ -6,4 +6,4 @@ Movement = Arrowkeys /
 Superpower = Ctrl /
 See Hitbox = "D"
 
-If you destroy an enemy you get +1 points, but if you get hit by and enemy you lose -5 points
+If you destroy an enemy you get +1 points, but if you get hit by and enemy you lose -3 points
